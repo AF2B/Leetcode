@@ -16,7 +16,7 @@ Este repositório contém soluções para desafios do LeetCode, organizadas por 
 
 ## Desafios Solucionados
 
-- 🟢 **Problemas Fáceis**: 14 problemas solucionados
+- 🟢 **Problemas Fáceis**: 15 problemas solucionados
 - 🟡 **Problemas Médios**: 5 problemas solucionados
 - 🔴 **Problemas Difíceis**: 0 problemas solucionados
 
