@@ -3,37 +3,32 @@
    Name: Integer to Roman\n"
   (:require [clojure.test :refer [deftest is run-tests]]))
 
-(def roman-symbols
-  "A mapping of Roman numeral symbols to their corresponding integer values."
-  [{:symbol "M" :value 1000}
-   {:symbol "CM" :value 900}
-   {:symbol "D" :value 500}
-   {:symbol "CD" :value 400}
-   {:symbol "C" :value 100}
-   {:symbol "XC" :value 90}
-   {:symbol "L" :value 50}
-   {:symbol "XL" :value 40}
-   {:symbol "X" :value 10}
-   {:symbol "IX" :value 9}
-   {:symbol "V" :value 5}
-   {:symbol "IV" :value 4}
-   {:symbol "I" :value 1}])
+(defonce roman-symbols 
+  [["M" 1000] ["CM" 900] ["D" 500] ["CD" 400] ["C" 100] ["XC" 90]
+   ["L" 50] ["XL" 40] ["X" 10] ["IX" 9] ["V" 5] ["IV" 4] ["I" 1]])
 
-(defn int-to-roman
-  "Convert an integer to its Roman numeral representation.\n
-  Args:
-    num - An integer value to convert (1 <= num <= 3999).
+(defn int-to-roman 
+  "Convert an integer to its Roman numeral representation.
     
-  Returns:
-    A string representing the Roman numeral equivalent of the integer."
+    Args:
+      num - An integer value to convert (1 <= num <= 3999).
+    
+    Returns:
+      A string representing the Roman numeral equivalent of the integer.
+    
+    Examples:
+      (int-to-roman 4)    ;=> \"IV\"
+      (int-to-roman 9)    ;=> \"IX\"
+      (int-to-roman 1994) ;=> \"MCMXCIV\""
   [num]
+  {:pre [(and (integer? num) (<= 1 num 3999))]}
   (loop [number num
          result ""]
     (if (zero? number)
       result
-      (let [next-symbol (first (filter #(<= (:value %) number) roman-symbols))]
-        (recur (- number (:value next-symbol))
-               (str result (:symbol next-symbol)))))))
+      (let [[symbol value] (first (filter #(<= (second %) number) roman-symbols))]
+        (recur (- number value)
+               (str result symbol))))))
 
 (deftest test-int-to-roman
   (is (= (int-to-roman 1) "I"))
@@ -41,6 +36,10 @@
   (is (= (int-to-roman 9) "IX"))
   (is (= (int-to-roman 58) "LVIII"))
   (is (= (int-to-roman 1994) "MCMXCIV"))
-  (is (= (int-to-roman 3999) "MMMCMXCIX")))
+  (is (= (int-to-roman 3999) "MMMCMXCIX"))
+  (is (= (int-to-roman 1) "I"))
+  (is (= (int-to-roman 3999) "MMMCMXCIX"))
+  (is (thrown? AssertionError (int-to-roman 0)))
+  (is (thrown? AssertionError (int-to-roman 4000))))
 
 (run-tests)
