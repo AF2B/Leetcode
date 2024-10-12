@@ -17,7 +17,7 @@
 ## Desafios Solucionados
 
 - 🟢 **Problemas Fáceis**: 45 problemas solucionados
-- 🟡 **Problemas Médios**: 13 problemas solucionados
+- 🟡 **Problemas Médios**: 14 problemas solucionados
 - 🔴 **Problemas Difíceis**: 0 problemas solucionados
 
 ## Como Contribuir
