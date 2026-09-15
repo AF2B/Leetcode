@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build & test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Test
+        run: |
+          if find solutions -name 'test.cpp' 2>/dev/null | grep -q .; then
+            ctest --test-dir build --output-on-failure
+          else
+            echo "No solutions with tests yet, skipping ctest."
+          fi
+
+  static-analysis:
+    name: Static analysis
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-tidy and cppcheck
+        run: sudo apt-get update && sudo apt-get install -y clang-tidy cppcheck
+
+      - name: Configure (compile_commands.json)
+        run: cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+      - name: Run clang-tidy
+        run: |
+          files=$(find solutions -name '*.cpp' 2>/dev/null || true)
+          if [ -n "$files" ]; then
+            echo "$files" | xargs clang-tidy -p build
+          else
+            echo "No C++ files to analyze yet."
+          fi
+
+      - name: Run cppcheck
+        run: |
+          if [ -d solutions ] && [ -n "$(find solutions -name '*.cpp' 2>/dev/null)" ]; then
+            cppcheck --enable=warning,performance,portability \
+                     --error-exitcode=1 --std=c++20 --language=c++ \
+                     --suppress=missingIncludeSystem -I. solutions
+          else
+            echo "No C++ files to analyze yet."
+          fi
+
+  format-check:
+    name: Format check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: sudo apt-get update && sudo apt-get install -y clang-format
+
+      - name: Check formatting
+        run: |
+          files=$(find solutions -name '*.cpp' -o -name '*.hpp' 2>/dev/null || true)
+          if [ -n "$files" ]; then
+            echo "$files" | xargs clang-format --dry-run --Werror
+          else
+            echo "No C++ files to check yet."
+          fi

@@ -3,3 +3,8 @@
 .ruby-lsp
 .vscode
 .calva
+
+# C++ build artifacts
+build/
+compile_commands.json
+CMakeUserPresets.json
