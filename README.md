@@ -1,27 +1,83 @@
-# Repositório de Desafios do LeetCode
+[English](README.md) | [Português](README.pt-br.md) | [Русский](README.ru-ru.md)
 
- Este repositório contém soluções para desafios do LeetCode, organizadas por nível de dificuldade e identificadas por emojis específicos nos commits.
+# LeetCode in C++
 
-## Como entender os emojis dos commits
+![CI](https://github.com/AF2B/Leetcode/actions/workflows/ci.yml/badge.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![C++23](https://img.shields.io/badge/C%2B%2B-23-blue.svg)
 
-- 🟢 **Solve problem NUMERO**: Indica a solução para um problema fácil (easy).
-- 🟡 **Solve problem NUMERO**: Indica a solução para um problema médio (medium).
-- 🔴 **Solve problem NUMERO**: Indica a solução para um problema difícil (hard).
-- 🐛 **Corrige**: Correção de bugs identificados.
-- 📝 **Atualiza**: Atualização de documentação ou informações não relacionadas a funcionalidades ou correções de bugs.
-- 🚀 **Melhora**: Melhoria de desempenho ou otimização de código existente.
-- ⚡️ **Refatora**: Refatoração de código para melhorar a estrutura ou legibilidade.
-- 🎨 **Estiliza**: Alterações relacionadas à formatação, estilo de código ou organização estrutural.
-- 🚧 **WIP**: Trabalho em progresso, indicando que uma alteração ainda não está completa ou finalizada.
+A collection of LeetCode solutions written entirely in modern C++ (C++23). The same problem is often solved from multiple angles — the optimized approach, brute force, object-oriented design, functional style, and classic design patterns — with automated build, static analysis, formatting, and test checks running on every pull request.
 
-## Desafios Solucionados
+## Why multiple approaches per problem
 
-- 🟢 **Problemas Fáceis**: 50 problemas solucionados
-- 🟡 **Problemas Médios**: 19 problemas solucionados
-- 🔴 **Problemas Difíceis**: 0 problemas solucionados
+Solving a problem once proves you found an answer. Solving it again as a class hierarchy, again with `std::ranges` and no mutable state, and again behind a design pattern proves you understand *why* the answer works — and gives future-me a reference for how the same idea looks under different constraints.
 
-## Como Contribuir
+## Repository structure
 
-- Sinta-se à vontade para abrir pull requests com novas soluções para problemas do LeetCode.
-- Certifique-se de seguir o padrão de commits descrito acima para manter a consistência e clareza no histórico do repositório.
-- Ao abrir um pull request, forneça uma descrição clara do problema resolvido e da abordagem utilizada na solução.
+```
+solutions/
+  0001-0100/
+    0001-two-sum/
+      README.md            # problem summary, tags, complexity per approach
+      optimized/
+        solution.hpp
+        solution.cpp
+        test.cpp
+      brute-force/
+      oop/
+      functional/
+      design-patterns/
+  0101-0200/
+    ...
+```
+
+Problems are grouped in ranges of 100 so the repository stays easy to browse well past problem #3000. Every problem folder documents the time/space complexity of each approach it contains. Only `optimized/` is mandatory — the other approaches are added incrementally over time.
+
+SQL problems have no meaningful C++ equivalent (LeetCode expects a SQL query, not a program), so the legacy `sql/` folder is kept as-is and out of scope for the C++ migration.
+
+## Commit convention
+
+Every commit is tagged with an emoji describing its intent:
+
+| Emoji | Meaning |
+|---|---|
+| 🟢 | Solves an **easy** problem |
+| 🟡 | Solves a **medium** problem |
+| 🔴 | Solves a **hard** problem |
+| 🐛 | Bug fix |
+| 📝 | Documentation update |
+| 🚀 | Performance improvement |
+| ⚡️ | Refactor |
+| 🎨 | Formatting / structural style |
+| 🚧 | Work in progress |
+| 🔧 | Tooling, build system, or CI change |
+
+## Building and testing locally
+
+Requirements: CMake ≥ 3.20 and a C++23 compiler (GCC ≥ 13 or Clang ≥ 16).
+
+```bash
+cmake -S . -B build
+cmake --build build
+ctest --test-dir build --output-on-failure
+```
+
+## Continuous integration
+
+Every pull request runs three checks:
+
+1. **Build** — compiles every solution with `-Wall -Wextra -Wpedantic -Werror`.
+2. **Static analysis** — `clang-tidy` and `cppcheck`.
+3. **Format check** — `clang-format --dry-run --Werror`.
+
+## Progress
+
+🚧 This repository is being migrated to C++. Existing solutions previously written in other languages are being converted one pull request at a time.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the folder convention, commit style, and how to add a new problem.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
