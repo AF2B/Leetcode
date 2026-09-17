@@ -1,0 +1,5 @@
+# HLint configuration for this repository.
+# See https://github.com/ndmitchell/hlint#readme for the full list of options.
+#
+# No custom rules yet — this project relies on HLint's own sensible defaults.
+# Add ignores here as real solutions surface hints not worth acting on.

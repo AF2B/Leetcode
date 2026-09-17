@@ -1,0 +1,21 @@
+name: leetcode
+version: 0.1.0.0
+license: MIT
+author: André Borba
+maintainer: andre.borbaaf2b@gmail.com
+github: AF2B/Leetcode
+synopsis: LeetCode solutions in Haskell, one problem per folder under solutions/
+
+dependencies:
+  - base
+
+tests:
+  spec:
+    main: Spec.hs
+    source-dirs: solutions
+    build-tools:
+      - hspec-discover:hspec-discover
+    dependencies:
+      - hspec
+    ghc-options:
+      - -Wall

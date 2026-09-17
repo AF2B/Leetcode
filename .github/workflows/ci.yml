@@ -12,19 +12,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Configure
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: "9.10"
+          cabal-version: "3.16"
+
+      - name: Generate leetcode.cabal from package.yaml
+        run: |
+          cabal install hpack --installdir="$HOME/.local/bin" --overwrite-policy=always
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          hpack
 
       - name: Build
-        run: cmake --build build --parallel
+        run: cabal build --enable-tests
 
       - name: Test
-        run: |
-          if find solutions -name 'test.cpp' 2>/dev/null | grep -q .; then
-            ctest --test-dir build --output-on-failure
-          else
-            echo "No solutions with tests yet, skipping ctest."
-          fi
+        run: cabal test --test-show-details=streaming
 
   static-analysis:
     name: Static analysis
@@ -32,29 +35,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install clang-tidy and cppcheck
-        run: sudo apt-get update && sudo apt-get install -y clang-tidy cppcheck
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: "9.10"
+          cabal-version: "3.16"
 
-      - name: Configure (compile_commands.json)
-        run: cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-
-      - name: Run clang-tidy
+      - name: Install hlint
         run: |
-          files=$(find solutions -name '*.cpp' 2>/dev/null || true)
+          cabal install hlint --installdir="$HOME/.local/bin" --overwrite-policy=always
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Run hlint
+        run: |
+          files=$(find solutions -name '*.hs' 2>/dev/null || true)
           if [ -n "$files" ]; then
-            echo "$files" | xargs clang-tidy -p build
+            hlint solutions
           else
-            echo "No C++ files to analyze yet."
-          fi
-
-      - name: Run cppcheck
-        run: |
-          if [ -d solutions ] && [ -n "$(find solutions -name '*.cpp' 2>/dev/null)" ]; then
-            cppcheck --enable=warning,performance,portability \
-                     --error-exitcode=1 --std=c++20 --language=c++ \
-                     --suppress=missingIncludeSystem -I. solutions
-          else
-            echo "No C++ files to analyze yet."
+            echo "No Haskell files to analyze yet."
           fi
 
   format-check:
@@ -63,14 +60,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install clang-format
-        run: sudo apt-get update && sudo apt-get install -y clang-format
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: "9.10"
+          cabal-version: "3.16"
+
+      - name: Install fourmolu
+        run: |
+          cabal install fourmolu --installdir="$HOME/.local/bin" --overwrite-policy=always
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Check formatting
         run: |
-          files=$(find solutions -name '*.cpp' -o -name '*.hpp' 2>/dev/null || true)
+          files=$(find solutions -name '*.hs' 2>/dev/null || true)
           if [ -n "$files" ]; then
-            echo "$files" | xargs clang-format --dry-run --Werror
+            echo "$files" | xargs fourmolu --mode check
           else
-            echo "No C++ files to check yet."
+            echo "No Haskell files to check yet."
           fi
