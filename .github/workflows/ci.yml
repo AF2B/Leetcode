@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build & test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: "9.10"
+          cabal-version: "3.16"
+
+      - name: Generate leetcode.cabal from package.yaml
+        run: |
+          cabal install hpack --installdir="$HOME/.local/bin" --overwrite-policy=always
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          hpack
+
+      - name: Build
+        run: cabal build --enable-tests
+
+      - name: Test
+        run: cabal test --test-show-details=streaming
+
+  static-analysis:
+    name: Static analysis
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: "9.10"
+          cabal-version: "3.16"
+
+      - name: Install hlint
+        run: |
+          cabal install hlint --installdir="$HOME/.local/bin" --overwrite-policy=always
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Run hlint
+        run: |
+          files=$(find solutions -name '*.hs' 2>/dev/null || true)
+          if [ -n "$files" ]; then
+            hlint solutions
+          else
+            echo "No Haskell files to analyze yet."
+          fi
+
+  format-check:
+    name: Format check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: "9.10"
+          cabal-version: "3.16"
+
+      - name: Install fourmolu
+        run: |
+          cabal install fourmolu --installdir="$HOME/.local/bin" --overwrite-policy=always
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Check formatting
+        run: |
+          files=$(find solutions -name '*.hs' 2>/dev/null || true)
+          if [ -n "$files" ]; then
+            echo "$files" | xargs fourmolu --mode check
+          else
+            echo "No Haskell files to check yet."
+          fi

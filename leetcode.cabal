@@ -1,0 +1,35 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.39.6.
+--
+-- see: https://github.com/sol/hpack
+
+name:           leetcode
+version:        0.1.0.0
+synopsis:       LeetCode solutions in Haskell, one problem per folder under solutions/
+homepage:       https://github.com/AF2B/Leetcode#readme
+bug-reports:    https://github.com/AF2B/Leetcode/issues
+author:         André Borba
+maintainer:     andre.borbaaf2b@gmail.com
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/AF2B/Leetcode
+
+test-suite spec
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_leetcode
+  hs-source-dirs:
+      solutions
+  ghc-options: -Wall
+  build-tool-depends:
+      hspec-discover:hspec-discover
+  build-depends:
+      base
+    , hspec
+  default-language: Haskell2010
