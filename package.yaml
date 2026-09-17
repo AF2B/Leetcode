@@ -8,6 +8,7 @@ synopsis: LeetCode solutions in Haskell, one problem per folder under solutions/
 
 dependencies:
   - base
+  - containers
 
 tests:
   spec:
