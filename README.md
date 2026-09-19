@@ -1,37 +1,55 @@
 [English](README.md) | [Português](README.pt-br.md) | [Русский](README.ru-ru.md)
 
-# LeetCode in Haskell
+# LeetCode in C++
 
 ![CI](https://github.com/AF2B/Leetcode/actions/workflows/ci.yml/badge.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Haskell](https://img.shields.io/badge/Haskell-GHC%209.10-blue.svg)
+![C++23](https://img.shields.io/badge/C%2B%2B-23-blue.svg)
 
-A collection of LeetCode solutions written entirely in Haskell. The same problem is often solved from multiple angles — the optimized approach, brute force, a typeclass-driven design, and classic design patterns encoded with Haskell's type system — with automated build, static analysis, formatting, and test checks running on every pull request.
+A collection of LeetCode solutions written entirely in C++23. Every solved
+problem ships with an automated unit test, and the same problem is often
+solved from more than one angle — brute force, optimized, recursive, and so
+on — living side by side in the same files, with build, static analysis, and
+format checks running on every pull request.
 
 ## Why multiple approaches per problem
 
-Solving a problem once proves you found an answer. Solving it again as a brute-force baseline, again favoring pure, typeclass-driven composition, and again behind a classic design pattern proves you understand *why* the answer works — and gives future-me a reference for how the same idea looks under different constraints.
+Solving a problem once proves you found an answer. Solving it again as a
+brute-force baseline, again as the optimized version, again recursively (or
+however else it can be attacked) proves you understand *why* the answer
+works — and leaves a reference for how the same idea looks under different
+constraints. It isn't a requirement for every problem, but the structure is
+ready for it whenever it's worth doing.
 
 ## Repository structure
 
 ```
 solutions/
-  R0001_0100/
-    P0001_TwoSum/
-      README.md            # problem summary, tags, complexity per approach
-      Optimized/
-        Solution.hs
-        SolutionSpec.hs
-      BruteForce/
-      Functional/
-      DesignPatterns/
-  R0101_0200/
+  0001-0100/
+    0001-two-sum/
+      README.md         # problem statement summary, link, difficulty, tags
+      solution.hpp       # public interface — one function per approach
+      solution.cpp       # implementation
+      test.cpp           # Catch2 tests — one TEST_CASE per approach
+  0101-0200/
     ...
 ```
 
-Problems are grouped in ranges of 100 so the repository stays easy to browse well past problem #3000. Folder names double as Haskell module-name components, so they use `PascalCase`/`Snake_Case` segments instead of the hyphens LeetCode's own slugs use. Every problem folder documents the time/space complexity of each approach it contains. Only `Optimized/` is mandatory — the other approaches are added incrementally over time. `hspec-discover` automatically finds every `*Spec.hs` file under `solutions/`, so a new problem's tests run in CI with no manual registration.
+Problems are grouped in ranges of 100 so the repository stays easy to browse
+well past problem #3000. Every problem is a single folder with exactly three
+code files — never a folder per approach: when a problem is solved more than
+one way, each approach is a separate function (or method) in the same
+`solution.hpp`/`solution.cpp`, tested by its own `TEST_CASE` in the same
+`test.cpp`. The problem's `README.md` documents the problem itself (statement
+summary, link, difficulty, tags), not the approaches, which are documented as
+comments in the code.
 
-SQL problems have no meaningful Haskell equivalent (LeetCode expects a SQL query, not a program), so the legacy `sql/` folder is kept as-is and out of scope for the Haskell migration.
+Every problem must ship a test — a solution without a `test.cpp` covering it
+isn't considered done.
+
+SQL problems have no meaningful C++ equivalent (LeetCode expects a SQL query,
+not a program), so the legacy `sql/` folder is kept as-is and out of scope
+for this migration.
 
 ## Commit convention
 
@@ -52,29 +70,32 @@ Every commit is tagged with an emoji describing its intent:
 
 ## Building and testing locally
 
-Requirements: GHC ≥ 9.10 and Cabal ≥ 3.16 (a [ghcup](https://www.haskell.org/ghcup/) install covers both), plus [hpack](https://github.com/sol/hpack).
+Requirements: CMake ≥ 3.20 and a C++23 compiler (GCC ≥ 13 or Clang ≥ 16).
 
 ```bash
-hpack
-cabal build --enable-tests
-cabal test
+cmake -S . -B build
+cmake --build build --parallel
+ctest --test-dir build --output-on-failure
 ```
 
 ## Continuous integration
 
 Every pull request runs three checks:
 
-1. **Build & test** — `cabal build`/`cabal test` against every solution and its Hspec spec.
-2. **Static analysis** — `hlint`.
-3. **Format check** — `fourmolu --mode check`.
+1. **Build & test** — CMake + Catch2 against every problem's `test.cpp`.
+2. **Static analysis** — `clang-tidy` and `cppcheck`.
+3. **Format check** — `clang-format --dry-run --Werror`.
 
 ## Progress
 
-🚧 This repository is being migrated to Haskell. Existing solutions previously written in other languages are being converted one pull request at a time.
+🚧 This repository is being migrated to C++23. Existing solutions previously
+written in other languages (Clojure, Go, Python, Ruby, Swift, TypeScript) are
+being converted one pull request at a time.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the folder convention, commit style, and how to add a new problem.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the folder convention, commit
+style, and how to add a new problem.
 
 ## License
 
