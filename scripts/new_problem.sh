@@ -47,7 +47,7 @@ namespace leetcode::p${padded} {
 // When adding another approach later, declare it alongside this one
 // (e.g. solveBruteForce, solveOptimized) instead of creating a new file.
 
-}  // namespace leetcode::p${padded}
+} // namespace leetcode::p${padded}
 EOF
 
 cat > "${problem_dir}/solution.cpp" <<EOF
@@ -57,7 +57,7 @@ namespace leetcode::p${padded} {
 
 // TODO: implement the solution.
 
-}  // namespace leetcode::p${padded}
+} // namespace leetcode::p${padded}
 EOF
 
 cat > "${problem_dir}/test.cpp" <<EOF
