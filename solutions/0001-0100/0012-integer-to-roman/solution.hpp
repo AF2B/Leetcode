@@ -8,4 +8,4 @@ namespace leetcode::p0012 {
 // symbol first.
 std::string solve(int num);
 
-}  // namespace leetcode::p0012
+} // namespace leetcode::p0012
