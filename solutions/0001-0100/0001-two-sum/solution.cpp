@@ -30,4 +30,4 @@ std::vector<int> solveBruteForce(const std::vector<int>& nums, int target) {
     return {};
 }
 
-}  // namespace leetcode::p0001
+} // namespace leetcode::p0001
