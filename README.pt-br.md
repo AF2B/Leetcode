@@ -1,39 +1,59 @@
 [English](README.md) | [Português](README.pt-br.md) | [Русский](README.ru-ru.md)
 
-# LeetCode em Haskell
+# LeetCode em C++
 
 ![CI](https://github.com/AF2B/Leetcode/actions/workflows/ci.yml/badge.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Haskell](https://img.shields.io/badge/Haskell-GHC%209.10-blue.svg)
+![C++23](https://img.shields.io/badge/C%2B%2B-23-blue.svg)
 
-Uma coleção de soluções do LeetCode escritas inteiramente em Haskell. O mesmo problema costuma ser resolvido de mais de um ângulo — a abordagem otimizada, força bruta, um design orientado a typeclasses e design patterns clássicos codificados com o sistema de tipos do Haskell — com verificações automáticas de build, análise estática, formatação e testes em toda pull request.
+Uma coleção de soluções do LeetCode escritas inteiramente em C++23. Todo
+problema resolvido vem acompanhado de um teste unitário automatizado, e o
+mesmo problema costuma ser resolvido por mais de um ângulo — força bruta,
+otimizado, recursivo, entre outros — convivendo lado a lado nos mesmos
+arquivos, com verificações de build, análise estática e formatação em toda
+pull request.
 
 ## Por que várias abordagens por problema
 
-Resolver um problema uma vez prova que você encontrou uma resposta. Resolvê-lo de novo como uma linha de base de força bruta, de novo priorizando composição pura orientada a typeclasses, e de novo por trás de um design pattern clássico prova que você entende *por que* a resposta funciona — além de deixar uma referência de como a mesma ideia se comporta sob restrições diferentes.
+Resolver um problema uma vez prova que você encontrou uma resposta.
+Resolvê-lo de novo como uma linha de base de força bruta, de novo na versão
+otimizada, de novo de forma recursiva (ou por qualquer outro ângulo possível)
+prova que você entende *por que* a resposta funciona — e deixa uma
+referência de como a mesma ideia se comporta sob restrições diferentes. Não é
+uma exigência para todo problema, mas a estrutura já está pronta para isso
+sempre que valer a pena.
 
 ## Estrutura do repositório
 
 ```
 solutions/
-  R0001_0100/
-    P0001_TwoSum/
-      README.md            # enunciado resumido, tags, complexidade por abordagem
-      Optimized/
-        Solution.hs
-        SolutionSpec.hs
-      BruteForce/
-      Functional/
-      DesignPatterns/
-  R0101_0200/
+  0001-0100/
+    0001-two-sum/
+      README.md         # resumo do enunciado, link, dificuldade, tags
+      solution.hpp       # interface pública — uma função por abordagem
+      solution.cpp       # implementação
+      test.cpp           # testes Catch2 — um TEST_CASE por abordagem
+  0101-0200/
     ...
 ```
 
-Os problemas são agrupados em faixas de 100 para o repositório continuar navegável mesmo passando do problema #3000. Nomes de pasta também funcionam como componentes de nome de módulo Haskell, por isso usam segmentos em `PascalCase`/`Snake_Case` em vez dos hífens que os próprios slugs do LeetCode usam. Cada pasta de problema documenta a complexidade de tempo/espaço de cada abordagem presente. Apenas `Optimized/` é obrigatória — as demais abordagens são adicionadas aos poucos. O `hspec-discover` encontra automaticamente todo arquivo `*Spec.hs` dentro de `solutions/`, então os testes de um problema novo já rodam no CI sem registro manual.
+Os problemas são agrupados em faixas de 100 para o repositório continuar
+navegável bem além do problema #3000. Todo problema é uma única pasta com
+exatamente três arquivos de código — nunca uma pasta por abordagem: quando um
+problema é resolvido de mais de uma forma, cada abordagem é uma função (ou
+método) separada no mesmo `solution.hpp`/`solution.cpp`, testada pelo seu
+próprio `TEST_CASE` no mesmo `test.cpp`. O `README.md` do problema documenta
+o problema em si (resumo do enunciado, link, dificuldade, tags), não as
+abordagens, que ficam documentadas como comentários no código.
 
-Problemas de SQL não têm um equivalente relevante em Haskell (o LeetCode espera uma query SQL, não um programa), então a pasta legada `sql/` permanece como está, fora do escopo da migração para Haskell.
+Todo problema precisa vir com teste — uma solução sem `test.cpp` cobrindo-a
+não é considerada concluída.
 
-## Padrão de commits
+Problemas de SQL não têm um equivalente significativo em C++ (o LeetCode
+espera uma query SQL, não um programa), então a pasta legada `sql/` é mantida
+como está e fica fora do escopo desta migração.
+
+## Convenção de commits
 
 Todo commit é marcado com um emoji que descreve sua intenção:
 
@@ -48,33 +68,36 @@ Todo commit é marcado com um emoji que descreve sua intenção:
 | ⚡️ | Refatoração |
 | 🎨 | Formatação / organização estrutural |
 | 🚧 | Trabalho em progresso |
-| 🔧 | Ferramental, build system ou CI |
+| 🔧 | Tooling, build system ou mudança de CI |
 
 ## Build e testes locais
 
-Requisitos: GHC ≥ 9.10 e Cabal ≥ 3.16 (uma instalação via [ghcup](https://www.haskell.org/ghcup/) cobre os dois), além do [hpack](https://github.com/sol/hpack).
+Requisitos: CMake ≥ 3.20 e um compilador C++23 (GCC ≥ 13 ou Clang ≥ 16).
 
 ```bash
-hpack
-cabal build --enable-tests
-cabal test
+cmake -S . -B build
+cmake --build build --parallel
+ctest --test-dir build --output-on-failure
 ```
 
 ## Integração contínua
 
 Toda pull request roda três verificações:
 
-1. **Build & testes** — `cabal build`/`cabal test` contra cada solução e seu spec Hspec.
-2. **Análise estática** — `hlint`.
-3. **Verificação de formatação** — `fourmolu --mode check`.
+1. **Build & test** — CMake + Catch2 contra o `test.cpp` de cada problema.
+2. **Análise estática** — `clang-tidy` e `cppcheck`.
+3. **Verificação de formatação** — `clang-format --dry-run --Werror`.
 
 ## Progresso
 
-🚧 Este repositório está sendo migrado para Haskell. As soluções que antes existiam em outras linguagens estão sendo convertidas uma pull request por vez.
+🚧 Este repositório está sendo migrado para C++23. As soluções existentes,
+escritas anteriormente em outras linguagens (Clojure, Go, Python, Ruby,
+Swift, TypeScript), estão sendo convertidas uma pull request por vez.
 
 ## Como contribuir
 
-Veja [CONTRIBUTING.md](CONTRIBUTING.md) para a convenção de pastas, o padrão de commits e como adicionar um novo problema.
+Veja [CONTRIBUTING.md](CONTRIBUTING.md) para a convenção de pastas, estilo de
+commit e como adicionar um novo problema.
 
 ## Licença
 
