@@ -1,17 +1,17 @@
 [English](README.md) | [Português](README.pt-br.md) | [Русский](README.ru-ru.md)
 
-# LeetCode em C++
+# LeetCode em OCaml
 
 ![CI](https://github.com/AF2B/Leetcode/actions/workflows/ci.yml/badge.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![C++23](https://img.shields.io/badge/C%2B%2B-23-blue.svg)
+![OCaml](https://img.shields.io/badge/OCaml-5-orange.svg)
 
-Uma coleção de soluções do LeetCode escritas inteiramente em C++23. Todo
+Uma coleção de soluções do LeetCode escritas inteiramente em OCaml. Todo
 problema resolvido vem acompanhado de um teste unitário automatizado, e o
 mesmo problema costuma ser resolvido por mais de um ângulo — força bruta,
 otimizado, recursivo, entre outros — convivendo lado a lado nos mesmos
-arquivos, com verificações de build, análise estática e formatação em toda
-pull request.
+arquivos, com verificações de build, testes e formatação em toda pull
+request.
 
 ## Por que várias abordagens por problema
 
@@ -30,26 +30,27 @@ solutions/
   0001-0100/
     0001-two-sum/
       README.md         # resumo do enunciado, link, dificuldade, tags
-      solution.hpp       # interface pública — uma função por abordagem
-      solution.cpp       # implementação
-      test.cpp           # testes Catch2 — um TEST_CASE por abordagem
+      dune               # definição do executável de teste
+      solution.mli       # interface pública
+      solution.ml        # implementação
+      test.ml            # testes Alcotest
   0101-0200/
     ...
 ```
 
 Os problemas são agrupados em faixas de 100 para o repositório continuar
 navegável bem além do problema #3000. Todo problema é uma única pasta com
-exatamente três arquivos de código — nunca uma pasta por abordagem: quando um
-problema é resolvido de mais de uma forma, cada abordagem é uma função (ou
-método) separada no mesmo `solution.hpp`/`solution.cpp`, testada pelo seu
-próprio `TEST_CASE` no mesmo `test.cpp`. O `README.md` do problema documenta
-o problema em si (resumo do enunciado, link, dificuldade, tags), não as
-abordagens, que ficam documentadas como comentários no código.
+exatamente quatro arquivos — nunca uma pasta por abordagem: quando um
+problema é resolvido de mais de uma forma, cada abordagem é uma função
+separada no mesmo `solution.mli`/`solution.ml`, testada pelo seu próprio caso
+no mesmo `test.ml`. O `README.md` do problema documenta o problema em si
+(resumo do enunciado, link, dificuldade, tags), não as abordagens, que ficam
+documentadas como comentários OCamldoc em `solution.mli`.
 
-Todo problema precisa vir com teste — uma solução sem `test.cpp` cobrindo-a
+Todo problema precisa vir com teste — uma solução sem `test.ml` cobrindo-a
 não é considerada concluída.
 
-Problemas de SQL não têm um equivalente significativo em C++ (o LeetCode
+Problemas de SQL não têm um equivalente significativo em OCaml (o LeetCode
 espera uma query SQL, não um programa), então a pasta legada `sql/` é mantida
 como está e fica fora do escopo desta migração.
 
@@ -72,25 +73,27 @@ Todo commit é marcado com um emoji que descreve sua intenção:
 
 ## Build e testes locais
 
-Requisitos: CMake ≥ 3.20 e um compilador C++23 (GCC ≥ 13 ou Clang ≥ 16).
+Requisitos: OCaml ≥ 5.0, [dune](https://dune.build) ≥ 3.0 e
+[Alcotest](https://github.com/mirage/alcotest).
 
 ```bash
-cmake -S . -B build
-cmake --build build --parallel
-ctest --test-dir build --output-on-failure
+opam install . --deps-only --with-test
+dune build @all
+dune runtest
 ```
 
 ## Integração contínua
 
-Toda pull request roda três verificações:
+Toda pull request roda duas verificações:
 
-1. **Build & test** — CMake + Catch2 contra o `test.cpp` de cada problema.
-2. **Análise estática** — `clang-tidy` e `cppcheck`.
-3. **Verificação de formatação** — `clang-format --dry-run --Werror`.
+1. **Build & test** — `dune build @all` e `dune runtest` contra o `test.ml`
+   de cada problema, com o conjunto de warnings do dev profile tratado como
+   erro (substituindo um linter separado).
+2. **Verificação de formatação** — `dune build @fmt`.
 
 ## Progresso
 
-🚧 Este repositório está sendo migrado para C++23. As soluções existentes,
+🚧 Este repositório está sendo migrado para OCaml. As soluções existentes,
 escritas anteriormente em outras linguagens (Clojure, Go, Python, Ruby,
 Swift, TypeScript), estão sendo convertidas uma pull request por vez.
 

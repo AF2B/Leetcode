@@ -4,7 +4,7 @@
 .vscode
 .calva
 
-# C++ build artifacts
-build/
-compile_commands.json
-CMakeUserPresets.json
+# OCaml build artifacts
+_build/
+*.install
+.merlin

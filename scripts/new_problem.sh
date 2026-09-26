@@ -38,37 +38,34 @@ cat > "${problem_dir}/README.md" <<EOF
 TODO: summarize the problem statement in your own words.
 EOF
 
-cat > "${problem_dir}/solution.hpp" <<EOF
-#pragma once
-
-namespace leetcode::p${padded} {
-
-// TODO: document time/space complexity, then declare the solution here.
-// When adding another approach later, declare it alongside this one
-// (e.g. solveBruteForce, solveOptimized) instead of creating a new file.
-
-} // namespace leetcode::p${padded}
+cat > "${problem_dir}/dune" <<EOF
+(test
+ (name test)
+ (modules solution test)
+ (libraries alcotest))
 EOF
 
-cat > "${problem_dir}/solution.cpp" <<EOF
-#include "solution.hpp"
+cat > "${problem_dir}/solution.mli" <<EOF
+(** TODO: one-line summary of what this problem asks for. *)
 
-namespace leetcode::p${padded} {
+(** [solve ...] TODO: document the contract.
 
-// TODO: implement the solution.
-
-} // namespace leetcode::p${padded}
+    Time: TODO. Space: TODO. *)
+val solve : unit -> unit
 EOF
 
-cat > "${problem_dir}/test.cpp" <<EOF
-#include <catch2/catch_test_macros.hpp>
+cat > "${problem_dir}/solution.ml" <<EOF
+let solve () = ()
+EOF
 
-#include "solution.hpp"
+cat > "${problem_dir}/test.ml" <<EOF
+let test_examples () =
+  (* TODO: port the examples from the problem statement. *)
+  Alcotest.(check bool) "placeholder" true true
 
-TEST_CASE("Problem ${number}", "[p${padded}]") {
-    // TODO: port the examples from the problem statement.
-    REQUIRE(true);
-}
+let () =
+  Alcotest.run "${number}: TODO"
+    [ ("solve", [ Alcotest.test_case "examples" \`Quick test_examples ]) ]
 EOF
 
 echo "Created ${problem_dir}"
