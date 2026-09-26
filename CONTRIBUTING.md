@@ -10,26 +10,32 @@ the hundred-wide bucket the problem number falls into (`0001-0100`,
 ```
 solutions/0001-0100/0001-two-sum/
   README.md          # problem statement summary, link, difficulty, tags
-  solution.hpp        # public interface
-  solution.cpp        # implementation
-  test.cpp            # Catch2 tests
+  dune               # test executable definition
+  solution.mli       # public interface
+  solution.ml        # implementation
+  test.ml            # Alcotest tests
 ```
 
-- A problem is a single folder with exactly these three code files — never a
+- A problem is a single folder with exactly these four files — never a
   folder per approach.
-- Every problem must have a `test.cpp`; a solution without a test covering it
+- Every problem must have a `test.ml`; a solution without a test covering it
   isn't considered done.
 - When a problem is solved more than one way, each approach is its own
-  function (or method) declared in `solution.hpp` and defined in
-  `solution.cpp` — e.g. `solve`, `solveBruteForce`, `solveOptimized`,
-  `solveTwoPointers` — with a matching `TEST_CASE` in `test.cpp`. This isn't
-  mandatory for every problem, but the convention is ready for it whenever
-  revisiting a problem from another angle is worthwhile.
-- Document each approach's time/space complexity as a short comment directly
-  above its declaration in `solution.hpp`.
+  function declared in `solution.mli` and defined in `solution.ml` — e.g.
+  `solve`, `solve_brute_force`, `solve_optimized`, `solve_two_pointers` —
+  with a matching test case in `test.ml`. This isn't mandatory for every
+  problem, but the convention is ready for it whenever revisiting a problem
+  from another angle is worthwhile.
+- Document each approach's time/space complexity as a short OCamldoc comment
+  directly above its declaration in `solution.mli`.
+- Prefer `result`/`option` over exceptions for expected failure cases (e.g.
+  input outside the problem's stated constraints). Exceptions are reserved
+  for invariant violations that should never happen.
+- Pattern matching is exhaustive — avoid a catch-all `_` that would silently
+  swallow a new case.
 - The problem's `README.md` documents the problem itself — statement
   summary, LeetCode link, difficulty, tags — not the approaches or their
-  complexity, which live as comments in the code.
+  complexity, which live as OCamldoc comments in `solution.mli`.
 
 Run `scripts/new_problem.sh <number> <slug>` to scaffold a new problem
 folder.
@@ -53,20 +59,23 @@ Every commit is tagged with an emoji describing its intent:
 
 ## Code style
 
-- C++23, formatted with the repository's `.clang-format` (run
-  `clang-format -i` before committing, or let your editor format on save).
-- `.clang-tidy` defines the static-analysis rules enforced in CI.
-- Prefer the standard library over hand-rolled utilities; prefer
-  `std::optional`/`std::expected` over sentinel values where it fits.
+- OCaml, formatted with the repository's `.ocamlformat` (run `dune fmt`, or
+  let your editor format on save).
+- Every module that exposes an API ships an explicit `.mli` — that's where
+  its documentation lives, one OCamldoc comment per public value.
+- `dune build` treats its dev-profile warning set as errors — unused code,
+  non-exhaustive matches, and shadowing all fail the build. That's the
+  static-analysis check enforced in CI, in place of a separate linter.
+- Prefer the standard library over hand-rolled utilities.
 
 ## Opening a pull request
 
 1. Branch off `main`.
 2. One problem (or one focused change) per pull request. When converting an
-   existing solution from another language into C++, one converted problem
-   is one pull request.
-3. Make sure it builds, and that `ctest`, `clang-tidy`, `cppcheck`, and
-   `clang-format --dry-run --Werror` all pass locally — the same three checks
-   run in CI (build & test, static analysis, format check).
+   existing solution from another language into OCaml, one converted
+   problem is one pull request.
+3. Make sure `dune build @all` and `dune runtest` pass, and that
+   `dune build @fmt` reports no diff — the same checks CI runs (build &
+   test, format check).
 4. Describe which LeetCode problem is being solved (or what is being
    changed) and why, in the PR description.
