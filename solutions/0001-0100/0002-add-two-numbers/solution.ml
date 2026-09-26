@@ -1,13 +1,13 @@
 let solve l1 l2 =
-  let rec go l1 l2 carry =
+  let step (l1, l2, carry) =
     match (l1, l2, carry) with
-    | [], [], 0 -> []
-    | [], [], c -> [ c ]
+    | [], [], 0 -> None
+    | [], [], c -> Some (c, ([], [], 0))
     | d :: rest, [], c | [], d :: rest, c ->
         let sum = d + c in
-        (sum mod 10) :: go rest [] (sum / 10)
+        Some (sum mod 10, (rest, [], sum / 10))
     | d1 :: rest1, d2 :: rest2, c ->
         let sum = d1 + d2 + c in
-        (sum mod 10) :: go rest1 rest2 (sum / 10)
+        Some (sum mod 10, (rest1, rest2, sum / 10))
   in
-  go l1 l2 0
+  List.of_seq (Seq.unfold step (l1, l2, 0))
