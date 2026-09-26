@@ -1,0 +1,4 @@
+(test
+ (name test)
+ (modules solution test)
+ (libraries alcotest))
